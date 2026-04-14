@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RANZZ CORE - V9 PRO</title>
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --secondary: #a020f0;
+            --purple: #bf40bf;
+            --bg: #0a0a0a;
+            --card: #121212;
+            --text: #ffffff;
+            --danger: #ff4444;
+            --success: #00ff88;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--bg); color: var(--text);
+            overflow-x: hidden;
+        }
+
+        /* --- TICKER --- */
+        #bc-container {
+            position: fixed; 
+            top: 55px;
+            left: 0; width: 100%;
+            background: linear-gradient(90deg, var(--secondary), var(--purple));
+            color: white; z-index: 98; display: none; 
+            overflow: hidden; white-space: nowrap;
+            padding: 8px 0; font-weight: bold; border-bottom: 1px solid var(--primary);
+        }
+
+        .ticker-text {
+            display: inline-block;
+            padding-left: 100%;
+            animation: ticker 12s linear infinite; 
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* --- LOGIN PAGE --- */
+        #login-page { height: 100vh; display: flex; justify-content: center; align-items: center; background: radial-gradient(circle, #1a0033 0%, #000 100%); }
+        .login-box { background: var(--card); padding: 25px; border-radius: 20px; border: 1px solid var(--secondary); text-align: center; width: 90%; max-width: 340px; }
+        
+        .photo-view { 
+            width: 100%; 
+            margin-bottom: 15px; 
+            border-radius: 12px; 
+            border: 1px solid #333; 
+            overflow: hidden; 
+            background: #000; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            height: auto;
+            min-height: 100px;
+        }
+        .photo-view img, .photo-view video { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            object-fit: contain;
+        }
+
+        input, select, textarea { 
+            width: 100%; padding: 14px; margin: 8px 0; background: #111; 
+            border: 1px solid #333; color: white; border-radius: 12px; 
+            box-sizing: border-box; outline: none; text-align: center;
+            font-family: inherit;
+        }
+
+        .btn-main { 
+            width: 100%; padding: 14px; border: none; border-radius: 12px; 
+            font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; display: block; 
+            box-sizing: border-box; text-decoration: none; font-size: 0.85rem; text-align: center;
+        }
+        .btn-login { background: linear-gradient(45deg, var(--secondary), var(--purple)); color: white; }
+        .btn-order { background: #00ff88; color: #000; margin-top: 15px; }
+
+        /* --- HEADER --- */
+        .header { 
+            background: var(--card); padding: 15px; border-bottom: 1px solid var(--primary); 
+            display: flex; align-items: center; justify-content: space-between; 
+            position: fixed; top: 0; width: 100%; box-sizing: border-box; z-index: 100; 
+        }
+        .hamburger { font-size: 26px; cursor: pointer; color: var(--primary); visibility: hidden; z-index: 110; }
+
+        /* --- SIDEBAR PANEL --- */
+        .sidebar { 
+            position: fixed; left: -100%; top: 0; width: 100%; height: 100%; 
+            background: #0a0a0a; z-index: 1000; transition: 0.4s; 
+            padding: 20px; box-sizing: border-box; overflow-y: auto; 
+        }
+        @media (min-width: 600px) { .sidebar { width: 450px; left: -450px; border-right: 2px solid var(--primary); } }
+        .sidebar.active { left: 0; }
+        
+        .menu-item { color: var(--primary); font-weight: bold; margin: 10px 0; padding: 15px; background: rgba(0, 242, 255, 0.05); border-radius: 8px; cursor: pointer; display: flex; justify-content: space-between; border: 1px solid #222; }
+        .menu-content { display: none; background: #000; padding: 10px; border-radius: 8px; border: 1px solid #333; margin-top: 5px; }
+
+        .db-container { width: 100%; overflow-x: auto; background: #080808; border-radius: 10px; }
+        .db-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; color: #ccc; min-width: 500px; }
+        .db-table th { color: var(--primary); border-bottom: 1px solid #333; padding: 10px; background: #111; }
+        .db-table td { border-bottom: 1px solid #1a1a1a; padding: 10px; text-align: center; }
+        .db-input-wide { width: 100px !important; text-align: left !important; padding: 5px !important; background: transparent !important; border: none !important; border-bottom: 1px solid #444 !important; border-radius: 0 !important; }
+
+        /* --- DASHBOARD LAYOUT --- */
+        .page-container { padding: 90px 15px 100px 15px; }
+        .tab-wrapper { display: flex; gap: 10px; margin-bottom: 15px; }
+        .tab-btn { flex: 1; padding: 12px; border: 1px solid var(--secondary); border-radius: 10px; background: none; color: white; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
+        .tab-btn.active { background: var(--secondary); box-shadow: 0 0 10px var(--secondary); }
+
+        .bug-box { background: var(--card); padding: 20px; border-radius: 15px; border: 1px solid #222; border-left: 4px solid var(--primary); }
+        .input-dark { background: #1a1a1a; border: 1px solid #333; padding: 15px; border-radius: 10px; color: white; width: 100%; box-sizing: border-box; margin: 10px 0; outline: none; }
+        .btn-attack { background: linear-gradient(45deg, #ff416c, #ff4b2b); color: white; border: none; padding: 15px; width: 100%; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
+        /* --- CHAT --- */
+        .chat-container { height: 250px; overflow-y: auto; background: #000; border-radius: 10px; border: 1px solid #222; padding: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .chat-bubble { padding: 8px 12px; border-radius: 15px; font-size: 0.75rem; max-width: 85%; }
+        .chat-bubble.dev { align-self: flex-start; background: var(--secondary); color: white; }
+        .chat-bubble.user { align-self: flex-end; background: #222; color: white; border: 1px solid #333; }
+        .chat-sender { font-size: 0.65rem; color: var(--primary); font-weight: bold; margin-bottom: 3px; display: block; cursor: pointer; }
+        .chat-tag { font-size: 0.5rem; background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; margin-left: 5px; }
+
+        /* --- NAV --- */
+        .bottom-nav { position: fixed; bottom: 15px; left: 15px; right: 15px; height: 60px; background: #111; display: flex; justify-content: space-around; align-items: center; border-radius: 15px; border: 1px solid var(--primary); z-index: 90; }
+        .nav-item { color: #555; text-align: center; cursor: pointer; font-size: 0.7rem; }
+        .nav-item.active { color: var(--primary); }
+
+        #mt-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 20px; box-sizing: border-box; }
+    </style>
+</head>
+<body onload="loadStoredPhotos()">
+
+    <div id="mt-overlay">
+        <h1 style="color:var(--danger); font-size: 3rem;">🛠️</h1>
+        <h2 style="color:white;">MAINTENANCE SYSTEM</h2>
+        <p style="color:#888;">Maaf, sistem sedang dalam pemeliharaan oleh Developer.<br>Silakan coba beberapa saat lagi.</p>
+    </div>
+
+    <div id="bc-container">
+        <div class="ticker-text" id="bc-text"></div>
+    </div>
+
+    <div id="login-page">
+        <div class="login-box">
+            <div class="photo-view" id="login-img-render"><span>MEDIA LOGIN</span></div>
+            <h2>RANZZ CORE</h2>
+            <p style="color:var(--secondary); font-size:0.7rem; letter-spacing:2px; margin-bottom:10px;">V9 PRO EDITION</p>
+            
+            <input type="text" id="user-in" placeholder="Username">
+            <input type="password" id="pass-in" placeholder="Password">
+            <button class="btn-main btn-login" onclick="doLogin()">LOGIN SYSTEM</button>
+
+            <div style="margin-top:20px; border-top:1px solid #333; padding-top:15px;">
+                <p style="font-size:0.65rem; color:#888;">BELUM PUNYA AKSES?</p>
+                <select id="order-plan">
+                    <option value="5500">1 HARI - Rp 5.500</option>
+                    <option value="15800">1 MINGGU - Rp 15.800</option>
+                    <option value="25000">PERMANENT - Rp 25.000</option>
+                </select>
+                <button class="btn-main btn-order" onclick="processOrder()">⚡ BELI AKSES (QRIS)</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="main-app" style="display:none;">
+        <div id="sidebar-dev" class="sidebar">
+            <h2 style="color:var(--primary); text-align:center;">ADMIN PANEL</h2>
+            
+            <div class="menu-item" onclick="toggleMenu('mt-box')">MAINTENANCE MODE <span>▼</span></div>
+            <div id="mt-box" class="menu-content">
+                <button onclick="setMaintenance(true)" class="btn-main" style="background:var(--danger); color:white;">ON (AKTIFKAN)</button>
+                <button onclick="setMaintenance(false)" class="btn-main" style="background:var(--success); color:black;">OFF (MATIKAN)</button>
+            </div>
+
+            <div class="menu-item" onclick="toggleMenu('create-box')">BUAT AKUN BARU <span>▼</span></div>
+            <div id="create-box" class="menu-content">
+                <input type="text" id="nu" placeholder="Username Baru">
+                <input type="text" id="np" placeholder="Password Baru">
+                <select id="nst">
+                    <option value="1 Hari">1 Hari</option>
+                    <option value="1 Minggu">1 Minggu</option>
+                    <option value="Permanent">Permanent</option>
+                </select>
+                <button onclick="addAccount()" class="btn-main" style="background:var(--primary); color:black;">DAFTARKAN AKUN</button>
+            </div>
+
+            <div class="menu-item" onclick="toggleMenu('db-box')">DATABASE USER <span>▼</span></div>
+            <div id="db-box" class="menu-content" style="display:block;">
+                <div class="db-container">
+                    <table class="db-table">
+                        <thead>
+                            <tr><th>ID</th><th>USER</th><th>PASS</th><th>DURASI</th><th>AKSI</th></tr>
+                        </thead>
+                        <tbody id="user-render"></tbody>
+                    </table>
+                </div>
+                <button onclick="saveChanges()" class="btn-main" style="background:var(--success); color:black; margin-top:10px;">💾 SIMPAN PERUBAHAN</button>
+            </div>
+
+            <div class="menu-item" onclick="toggleMenu('bc-box')">BROADCAST SYSTEM <span>▼</span></div>
+            <div id="bc-box" class="menu-content">
+                <input type="text" id="bc-input" placeholder="Teks Pengumuman...">
+                <button onclick="sendBC()" class="btn-main" style="background:var(--success); color:black;">KIRIM BC</button>
+            </div>
+
+            <div class="menu-item"><label for="up-login" style="cursor:pointer; width:100%;">GANTI MEDIA LOGIN</label><input type="file" id="up-login" accept="image/*,video/*" style="display:none;" onchange="uploadMedia(event, 'login')"></div>
+            <div class="menu-item"><label for="up-dash" style="cursor:pointer; width:100%;">GANTI MEDIA DASHBOARD</label><input type="file" id="up-dash" accept="image/*,video/*" style="display:none;" onchange="uploadMedia(event, 'dash')"></div>
+            
+            <button onclick="toggleSidebar()" class="btn-main" style="background:var(--danger); color:white; margin-top:30px;">CLOSE PANEL</button>
+        </div>
+
+        <div class="header">
+            <div class="hamburger" id="ham-btn" onclick="toggleSidebar()">☰</div>
+            <span style="color:var(--primary); font-weight:bold;">RANZZ CORE</span>
+            <a href="https://t.me/ranzz_offc" target="_blank" style="text-decoration:none; font-size:1.2rem;">🎧</a>
+        </div>
+
+        <div id="page-dash" class="page-container">
+            <div style="background:#1a1a1a; padding:10px; border-radius:10px; margin-bottom:15px; font-size:0.7rem; border:1px solid #333; display:flex; justify-content: space-between;">
+                <span>SERVER: <b style="color:var(--success);">ONLINE</b></span>
+                <span>STATUS: <b style="color:var(--primary);">CONNECTED</b></span>
+            </div>
+
+            <div class="photo-view" id="dash-img-render"><span>MEDIA DASHBOARD</span></div>
+
+            <div class="bug-box" style="margin-bottom: 20px; border-left: 4px solid var(--secondary);">
+                <p style="margin:0; font-weight:bold; color:var(--secondary);">GLOBAL CHAT ROOM</p>
+                <div class="chat-container" id="chat-render"></div>
+                <div style="display:flex; gap:5px; margin-top:10px;">
+                    <input type="text" id="chat-in" class="input-dark" style="margin:0;" placeholder="Ketik pesan...">
+                    <button onclick="sendGlobalChat()" style="background:var(--secondary); border:none; border-radius:10px; padding:0 15px; color:white;">SEND</button>
+                </div>
+            </div>
+
+            <div class="tab-wrapper">
+                <button class="tab-btn active" id="tab-nomor" onclick="switchBugTab('nomor')">BUG NOMOR (15)</button>
+                <button class="tab-btn" id="tab-group" onclick="switchBugTab('group')">BUG GROUP (10)</button>
+            </div>
+            
+            <div class="bug-box">
+                <p id="bug-title" style="margin:0; font-weight:bold; color:var(--primary);">NOMOR TARGET</p>
+                <input type="text" id="target-input" class="input-dark" placeholder="Masukkan target...">
+                <p style="font-size:0.6rem; color:#666; margin:5px 0;">METODE ATTACK:</p>
+                <select id="bug-type" class="input-dark"></select>
+                <button class="btn-attack" onclick="fireAttack()">EXECUTE ATTACK</button>
+            </div>
+        </div>
+
+        <div id="page-prof" style="display:none;" class="page-container">
+            <div style="background:var(--card); padding:30px; border-radius:20px; text-align:center; border:1px solid #222;">
+                <div id="profile-logo" style="font-size:4rem;">👤</div>
+                <h2 id="p-user">-</h2>
+                <div style="text-align:left; border-top:1px solid #333; margin-top:10px; padding-top:10px;">
+                    <p style="font-size:0.7rem; color:#666; margin-bottom:5px;">BIO PROFILE (KETIK SENDIRI):</p>
+                    <textarea id="bio-input" style="background:#000; color:var(--primary); font-size:0.8rem; height:80px; text-align:left; margin:0;" oninput="updateBio(this.value)" placeholder="Tulis bio Anda..."></textarea>
+                    
+                    <div style="margin-top:15px; border-top:1px solid #222; padding-top:10px;">
+                        <p>ID: <span id="p-id" style="color:var(--primary);">#0</span></p>
+                        <p>STATUS: <span id="p-status" style="color:var(--success);">ACTIVE</span></p>
+                    </div>
+                </div>
+                <button onclick="location.reload()" class="btn-main" style="background:var(--danger); color:white;">LOGOUT SYSTEM</button>
+            </div>
+        </div>
+
+        <div class="bottom-nav">
+            <div class="nav-item active" id="btn-d" onclick="tab('dash')">🏠<br>Dash</div>
+            <div class="nav-item" id="btn-p" onclick="tab('prof')">👤<br>User</div>
+        </div>
+    </div>
+
+    <script>
+        // --- SISTEM PENYIMPANAN DATA BESAR (INDEXEDDB) ---
+        const DB_NAME = "RanzzStorage";
+        const STORE_NAME = "MediaData";
+
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, 1);
+                request.onupgradeneeded = e => e.target.result.createObjectStore(STORE_NAME);
+                request.onsuccess = e => resolve(e.target.result);
+                request.onerror = e => reject(e.target.error);
+            });
+        }
+
+        async function saveMediaDB(key, data) {
+            const db = await openDB();
+            const tx = db.transaction(STORE_NAME, "readwrite");
+            tx.objectStore(STORE_NAME).put(data, key);
+            return tx.complete;
+        }
+
+        async function getMediaDB(key) {
+            const db = await openDB();
+            return new Promise((resolve) => {
+                const request = db.transaction(STORE_NAME).objectStore(STORE_NAME).get(key);
+                request.onsuccess = () => resolve(request.result);
+            });
+        }
+        // --- END SISTEM ---
+
+        const BOT_TOKEN = "7834259292:AAFg_lZaM_ZBlT8f779RxByJBaR7oeGc8WY";
+        const DEV_ID = "5474893948";
+        const PAKASIR_SLUG = "ranzz-digital";
+
+        let db = JSON.parse(localStorage.getItem('ranzz_db')) || [
+            { id: 1, user: "RanzzDev", pass: "300810", status: "Developer", bio: "Owner & Lead Developer of RANZZ CORE" }
+        ];
+        
+        let chats = JSON.parse(localStorage.getItem('ranzz_chats')) || [];
+        let isMaintenance = JSON.parse(localStorage.getItem('ranzz_mt')) || false;
+        let currentUser = null;
+        let tempDb = JSON.parse(JSON.stringify(db));
+
+        const bugNomor = ["CRASH-SYSTEM V1 😈", "UI-FREEZE DELAY ❄️", "CALL-SPAM EXPLOIT 📞", "ENGINE-KILLER 💀", "RAM-EATER 🐏", "HARD-FREEZE V2 🧊", "LOGOUT-FORCED 🚪", "KERNEL-OVERLOAD 🧠", "DATABASE-CRASH 🗃️", "ZOMBIE-PAYLOAD 🧟", "INTERNAL-ERROR ⚠️", "STAMP-PAYLOAD 🧪", "RESTART-LOOP 🔄", "GHOST-TEXT 👻", "BRUTE-FREEZE ❄️"];
+        const bugGroup = ["GROUP-DESTROYER 💣", "ADMIN-DEMOTE 📉", "INVITE-LOOP 📨", "MEMBER-KICKER 👟", "MUTE-GLOBAL 🔇", "OVERLOAD-MSG 🌋", "BIO-CHANGER 📝", "DESC-ERASER Sweep", "RENAME-SPAM 🏷️", "LINK-RESETTER 🔗"];
+
+        async function sendTelegram(msg) {
+            try {
+                await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ chat_id: DEV_ID, text: msg, parse_mode: 'HTML' })
+                });
+            } catch (e) { console.error("Tele error"); }
+        }
+
+        function checkMaintenance() {
+            if(isMaintenance && (!currentUser || currentUser.id !== 1)) {
+                document.getElementById('mt-overlay').style.display = "flex";
+            } else {
+                document.getElementById('mt-overlay').style.display = "none";
+            }
+        }
+
+        function setMaintenance(state) {
+            isMaintenance = state;
+            localStorage.setItem('ranzz_mt', state);
+            sendTelegram(`<b>🛠️ MAINTENANCE MODE</b>\nStatus: ${state ? "ON" : "OFF"}\nBy: ${currentUser.user}`);
+            alert(`Maintenance Mode: ${state ? "ON" : "OFF"}`);
+            if(state) checkMaintenance();
+            else document.getElementById('mt-overlay').style.display = "none";
+        }
+
+        function doLogin() {
+            const u = document.getElementById('user-in').value;
+            const p = document.getElementById('pass-in').value;
+            const user = db.find(x => x.user === u && x.pass === p);
+            
+            if(!user) return alert("AKSES DITOLAK!");
+            currentUser = user;
+            
+            if(user.id === 1) {
+                user.status = "Developer";
+                document.getElementById('ham-btn').style.visibility = "visible"; 
+                renderUsers();
+                sendTelegram(`<b>⚡ RANZZ CORE V9 LOGIN (DEV)</b>\nUser: ${user.user}\nRole: Developer 🌟`);
+            } else {
+                document.getElementById('ham-btn').style.visibility = "hidden";
+                if(isMaintenance) return checkMaintenance();
+            }
+            
+            document.getElementById('p-user').innerText = user.user;
+            document.getElementById('p-id').innerText = "#" + user.id;
+            document.getElementById('p-status').innerText = user.status;
+            document.getElementById('bio-input').value = user.bio || "Premium Member Ranzz Core.";
+            document.getElementById('profile-logo').innerText = (user.id === 1) ? "🌟" : "👤";
+            document.getElementById('login-page').style.display = "none";
+            document.getElementById('main-app').style.display = "block";
+            renderChats();
+        }
+
+        function updateBio(val) {
+            if(!currentUser) return;
+            currentUser.bio = val;
+            const idx = db.findIndex(x => x.id === currentUser.id);
+            if(idx !== -1) {
+                db[idx].bio = val;
+                localStorage.setItem('ranzz_db', JSON.stringify(db));
+                tempDb = JSON.parse(JSON.stringify(db));
+            }
+        }
+
+        async function processOrder() {
+            const plan = document.getElementById('order-plan');
+            const amount = plan.value;
+            const planText = plan.options[plan.selectedIndex].text;
+            const orderId = "RNZ" + Date.now();
+            await sendTelegram(`<b>💰 NEW ORDER NOTIF</b>\nUser: Guest/User\nOrder ID: <code>${orderId}</code>\nPlan: ${planText}\nStatus: Menunggu Pembayaran...`);
+            const payUrl = `https://app.pakasir.com/pay/${PAKASIR_SLUG}/${amount}?order_id=${orderId}&qris_only=1`;
+            window.location.href = payUrl;
+        }
+
+        function addAccount() {
+            const u = document.getElementById('nu').value;
+            const p = document.getElementById('np').value;
+            const s = document.getElementById('nst').value;
+            if(!u || !p) return alert("Isi data!");
+            tempDb.push({id: Date.now(), user: u, pass: p, status: s, bio: "Premium Member"});
+            renderUsers();
+        }
+
+        function renderUsers() {
+            document.getElementById('user-render').innerHTML = tempDb.map((u, i) => `
+                <tr>
+                    <td>${u.id === 1 ? 'DEV' : i+1}</td>
+                    <td><input type="text" value="${u.user}" onchange="updateTemp(${i}, 'user', this.value)" class="db-input-wide" ${u.id === 1 ? 'readonly' : ''}></td>
+                    <td><input type="text" value="${u.pass}" onchange="updateTemp(${i}, 'pass', this.value)" class="db-input-wide"></td>
+                    <td>${u.status}</td>
+                    <td>
+                        ${u.id === 1 ? '<span style="color:var(--primary)">ROOT</span>' : `<button onclick="delTemp(${i})" style="color:red; background:none; border:none; cursor:pointer; font-weight:bold;">[HAPUS]</button>`}
+                    </td>
+                </tr>`).join('');
+        }
+
+        function updateTemp(i, key, val) { tempDb[i][key] = val; }
+        
+        function delTemp(i) {
+            if(tempDb[i].id === 1) return alert("RanzzDev tidak bisa dihapus!");
+            if(confirm(`Yakin ingin menghapus akun ${tempDb[i].user}?`)) {
+                tempDb.splice(i, 1);
+                renderUsers();
+            }
+        }
+
+        function saveChanges() {
+            db = JSON.parse(JSON.stringify(tempDb));
+            localStorage.setItem('ranzz_db', JSON.stringify(db));
+            alert("Database Berhasil Disimpan!");
+        }
+
+        function fireAttack() {
+            const target = document.getElementById('target-input').value;
+            const type = document.getElementById('bug-type').value;
+            if(!target) return alert("Input target!");
+            alert("🔥 ATTACK EXECUTED!");
+            sendTelegram(`<b>🔥 ATTACK LOG</b>\nUser: ${currentUser.user}\nTarget: ${target}\nType: ${type}`);
+        }
+
+        function sendGlobalChat() {
+            const text = document.getElementById('chat-in').value;
+            if(!text) return;
+            const newChat = { id: currentUser.id, u: currentUser.user, s: currentUser.status, msg: text };
+            chats.push(newChat);
+            if(chats.length > 30) chats.shift();
+            localStorage.setItem('ranzz_chats', JSON.stringify(chats));
+            document.getElementById('chat-in').value = "";
+            renderChats();
+        }
+
+        function renderChats() {
+            const render = document.getElementById('chat-render');
+            render.innerHTML = chats.map(c => `
+                <div class="chat-bubble ${c.id === 1 ? 'dev' : 'user'}">
+                    <span class="chat-sender" onclick="viewChatInfo(${c.id})">${c.id === 1 ? '🌟' : '👤'} ${c.u} <span class="chat-tag">${c.s}</span></span>
+                    <div>${c.msg}</div>
+                </div>`).join('');
+            render.scrollTop = render.scrollHeight;
+        }
+
+        function viewChatInfo(targetId) {
+            const target = db.find(x => x.id === targetId);
+            if(!target) return;
+            if(currentUser.id === 1) {
+                alert(`[DEV VIEW INFO]\nUser: ${target.user}\nPass: ${target.pass}\nID: ${target.id}\nStatus: ${target.status}\nBio: ${target.bio}`);
+            } else {
+                alert(`[INFO ACCOUNT]\nUser: ${target.id === 1 ? '🌟' : target.user}\nStatus: ${target.status}\nBio: ${target.bio}`);
+            }
+        }
+
+        function sendBC() {
+            const text = document.getElementById('bc-input').value;
+            if(!text) return;
+            const container = document.getElementById('bc-container');
+            const bcText = document.getElementById('bc-text');
+            container.style.display = "block";
+            bcText.innerText = "📢 BROADCAST: " + text;
+            setTimeout(() => { container.style.display = "none"; }, 30000);
+        }
+
+        // --- UPLOAD MEDIA FIXED ---
+        function uploadMedia(event, type) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async e => {
+                const data = e.target.result;
+                const isVideo = file.type.startsWith('video');
+                const mediaObj = { content: data, type: isVideo ? 'video' : 'img' };
+                
+                // Simpan ke IndexedDB untuk storage besar
+                const storageKey = (type === 'login' ? 'ranzz_media_login' : 'ranzz_media_dash');
+                await saveMediaDB(storageKey, mediaObj);
+                
+                renderMedia(type, mediaObj);
+                alert("Upload Berhasil! Media Disimpan Permanen.");
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderMedia(type, obj) {
+            const divId = type === 'login' ? 'login-img-render' : 'dash-img-render';
+            const element = document.getElementById(divId);
+            if (!obj) return;
+            element.innerHTML = obj.type === 'video' ? `<video src="${obj.content}" autoplay muted loop playsinline></video>` : `<img src="${obj.content}">`;
+        }
+
+        async function loadStoredPhotos() {
+            // Ambil dari IndexedDB
+            const lm = await getMediaDB('ranzz_media_login');
+            const dm = await getMediaDB('ranzz_media_dash');
+            
+            if(lm) renderMedia('login', lm);
+            if(dm) renderMedia('dash', dm);
+            
+            switchBugTab('nomor');
+            checkMaintenance();
+        }
+        // --- END FIXED ---
+
+        function switchBugTab(type) {
+            document.getElementById('tab-nomor').classList.toggle('active', type === 'nomor');
+            document.getElementById('tab-group').classList.toggle('active', type === 'group');
+            document.getElementById('bug-title').innerText = (type === 'nomor') ? 'NOMOR TARGET' : 'LINK GROUP BUG';
+            const selectBug = document.getElementById('bug-type');
+            const currentList = (type === 'nomor') ? bugNomor : bugGroup;
+            selectBug.innerHTML = currentList.map(b => `<option value="${b}">${b}</option>`).join('');
+        }
+
+        function toggleSidebar() { document.getElementById('sidebar-dev').classList.toggle('active'); }
+        function toggleMenu(id) { const m = document.getElementById(id); m.style.display = (m.style.display === "block") ? "none" : "block"; }
+        function tab(t) {
+            document.getElementById('page-dash').style.display = t === 'dash' ? 'block' : 'none';
+            document.getElementById('page-prof').style.display = t === 'prof' ? 'block' : 'none';
+            document.getElementById('btn-d').classList.toggle('active', t === 'dash');
+            document.getElementById('btn-p').classList.toggle('active', t === 'prof');
+        }
+    </script>
+</body>
+</html>
